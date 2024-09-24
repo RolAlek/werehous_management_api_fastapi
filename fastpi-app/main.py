@@ -10,16 +10,18 @@ from core.config import settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # start app
     yield
+    # shutdown
     await db_manager.dispose()
 
 
 main_app = FastAPI(lifespan=lifespan)
 main_app.include_router(main_router, prefix=settings.api.prefix)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     uvicorn.run(
-        'main:main_app',
+        "main:main_app",
         host=settings.run.host,
         port=settings.run.port,
         reload=True,
