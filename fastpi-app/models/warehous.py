@@ -2,8 +2,8 @@ from datetime import datetime
 from enum import Enum
 
 from sqlalchemy import Enum as SAEnum
-from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column, validates
+from sqlalchemy import ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from models import Base
 
@@ -14,11 +14,21 @@ class OrderStatus(Enum):
     DELIVERED = "Доставлен"
 
 
+class OrderItem(Base):
+    order_id: Mapped[int] = mapped_column(ForeignKey('order.id'))
+    product_id: Mapped[int] = mapped_column(ForeignKey('product.id'))
+    amount: Mapped[int]
+
+
 class Product(Base):
     name: Mapped[str] = mapped_column(String(128), unique=True)
     description: Mapped[str]
     price: Mapped[float]
     amount: Mapped[int]
+    orders: Mapped[list["OrderItem"]] = relationship(
+        secondary="orderitem",
+        back_populates=""
+    )
 
     @validates("price")
     def validate_price(self, value):
@@ -35,4 +45,8 @@ class Order(Base):
             values_callable=lambda x: [e.value for e in x],
         ),
         default=OrderStatus.PENDING,
+    )
+    products: Mapped[list["Product"]] = relationship(
+        secondary="orderitem",
+        back_populates="orders",
     )
