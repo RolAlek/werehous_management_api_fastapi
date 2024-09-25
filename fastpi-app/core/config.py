@@ -8,7 +8,8 @@ class RunConfig(BaseModel):
 
 
 class APIPrefix(BaseModel):
-    prefix: str = "/api"
+    api_prefix: str = "/api"
+    product_prefix: str = "/products"
 
 
 class DBConfig(BaseModel):
