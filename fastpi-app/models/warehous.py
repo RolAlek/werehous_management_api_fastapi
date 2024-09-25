@@ -3,7 +3,7 @@ from enum import Enum
 
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy import ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from models import Base
 
@@ -15,8 +15,8 @@ class OrderStatus(Enum):
 
 
 class OrderItem(Base):
-    order_id: Mapped[int] = mapped_column(ForeignKey('order.id'))
-    product_id: Mapped[int] = mapped_column(ForeignKey('product.id'))
+    order_id: Mapped[int] = mapped_column(ForeignKey("order.id"))
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"))
     amount: Mapped[int]
 
 
@@ -25,16 +25,9 @@ class Product(Base):
     description: Mapped[str]
     price: Mapped[float]
     amount: Mapped[int]
-    orders: Mapped[list["OrderItem"]] = relationship(
-        secondary="orderitem",
-        back_populates=""
+    orders: Mapped[list["Order"]] = relationship(
+        secondary="orderitem", back_populates="products"
     )
-
-    @validates("price")
-    def validate_price(self, value):
-        if value <= 0:
-            raise ValueError("Price must be greater than 0!")
-        return round(value, 2)
 
 
 class Order(Base):
