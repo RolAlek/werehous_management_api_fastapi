@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, field_validator
 
 class ProductCreate(BaseModel):
     name: str = Field(..., min_length=3, max_length=128)
-    description: str | None = Field(None)
+    description: str | None
     price: float
     amount: int = 0
 
@@ -13,7 +13,7 @@ class ProductCreate(BaseModel):
             raise ValueError("Price must be greater than 0!")
         return round(value, 2)
 
-    @field_validator('name')
+    @field_validator("name")
     def validate_name(cls, value):
         if value is None:
             raise ValueError("Column `name` cant't be null.")
@@ -22,3 +22,10 @@ class ProductCreate(BaseModel):
 
 class ProductRead(ProductCreate):
     id: int
+
+
+class ProductUpdate(ProductCreate):
+    name: str | None
+    description: str | None
+    price: float | None
+    amount: int | None

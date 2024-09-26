@@ -1,3 +1,3 @@
-__all__ = ["ProductCreate", "ProductRead"]
+__all__ = ["ProductCreate", "ProductRead", "ProductUpdate"]
 
-from .product import ProductCreate, ProductRead
+from .product import ProductCreate, ProductRead, ProductUpdate
