@@ -1,6 +1,6 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from schemas import ProductRead, ProductCreate
@@ -23,3 +23,16 @@ async def create_product(
 async def get_products_multi(session: AsyncSession = Depends(db_manager.get_session)):
     return await product_crud.get_multi(session)
 
+
+@router.get("/{product_id}", response_model=ProductRead)
+async def get_product(
+    product_id: int,
+    session: AsyncSession = Depends(db_manager.get_session),
+):
+    product = await product_crud.get_by_attribute("id", product_id, session)
+    if product is None:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail=f"Product with {product_id} not found.",
+        )
+    return product

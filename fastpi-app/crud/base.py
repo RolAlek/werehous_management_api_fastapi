@@ -30,3 +30,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType]):
     async def get_multi(self, session: AsyncSession) -> list[ModelType]:
         objects = await session.scalars(select(self.model))
         return objects.all()
+
+    async def get_by_attribute(
+        self,
+        attr_name: str,
+        attr_value: str,
+        session: AsyncSession,
+    ) -> Optional[ModelType]:
+        return await session.scalar(
+            select(self.model)
+            .where(getattr(self.model, attr_name) == attr_value)
+        )
+
+
