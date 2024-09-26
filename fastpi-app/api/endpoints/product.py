@@ -45,3 +45,14 @@ async def update_product(
         await check_exist(product_id, session),
         session,
     )
+
+
+@router.delete("/{product_id}", status_code=HTTPStatus.NO_CONTENT)
+async def delete_product(
+    product_id: int,
+    session: AsyncSession = Depends(db_manager.get_session),
+):
+    await product_crud.remove(
+        await check_exist(product_id, session),
+        session,
+    )

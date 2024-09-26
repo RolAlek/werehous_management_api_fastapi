@@ -60,3 +60,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType]):
         await session.commit()
         await session.refresh(obj)
         return obj
+
+    @staticmethod
+    async def remove(obj: ModelType, session: AsyncSession) -> None:
+        await session.delete(obj)
+        await session.commit()
+
