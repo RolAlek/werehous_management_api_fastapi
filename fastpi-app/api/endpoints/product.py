@@ -17,3 +17,9 @@ async def create_product(
     session: AsyncSession = Depends(db_manager.get_session),
 ):
     return await product_crud.create(new_product, session)
+
+
+@router.get("/", response_model=list[ProductRead])
+async def get_products_multi(session: AsyncSession = Depends(db_manager.get_session)):
+    return await product_crud.get_multi(session)
+
