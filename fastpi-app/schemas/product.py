@@ -13,6 +13,12 @@ class ProductCreate(BaseModel):
             raise ValueError("Price must be greater than 0!")
         return round(value, 2)
 
+    @field_validator('name')
+    def validate_name(cls, value):
+        if value is None:
+            raise ValueError("Column `name` cant't be null.")
+        return value
+
 
 class ProductRead(ProductCreate):
     id: int
