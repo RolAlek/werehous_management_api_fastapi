@@ -5,7 +5,7 @@ class ProductCreate(BaseModel):
     name: str = Field(..., min_length=3, max_length=128)
     description: str | None
     price: float
-    amount: int = 0
+    in_stock: int = 0
 
     @field_validator("price")
     def validate_price(cls, value):
@@ -28,4 +28,4 @@ class ProductUpdate(ProductCreate):
     name: str | None
     description: str | None
     price: float | None
-    amount: int | None
+    in_stock: int | None
