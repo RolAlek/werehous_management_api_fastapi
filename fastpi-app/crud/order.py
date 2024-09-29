@@ -67,13 +67,11 @@ class OrderCRUD(CRUDBase):
     @staticmethod
     async def get_all_orders(session: AsyncSession):
         orders = await session.scalars(
-            select(Order)
-            .options(
-                selectinload(Order.products_details)
-                .joinedload(OrderItem.product)
+            select(Order).options(
+                selectinload(Order.products_details).joinedload(OrderItem.product)
             )
         )
-        response = [
+        return [
             ReadOrder(
                 id=order.id,
                 created_date=order.created_date,
@@ -85,11 +83,38 @@ class OrderCRUD(CRUDBase):
                         price=item.product.price,
                         description=item.product.description,
                         count=item.count_in_cart,
-                    ) for item in order.products_details
-                ]
-            ) for order in orders
+                    )
+                    for item in order.products_details
+                ],
+            )
+            for order in orders
         ]
-        return response
+
+    @staticmethod
+    async def get_order(order_id: int, session: AsyncSession):
+        order = await session.scalar(
+            select(Order)
+            .where(Order.id == order_id)
+            .options(
+                selectinload(Order.products_details)
+                .joinedload(OrderItem.product)
+            ),
+        )
+        return ReadOrder(
+            id=order.id,
+            created_date=order.created_date,
+            status=order.status,
+            products_details=[
+                ReadOrderItem(
+                    id=item.product.id,
+                    name=item.product.name,
+                    price=item.product.price,
+                    description=item.product.description,
+                    count=item.count_in_cart,
+                )
+                for item in order.products_details
+            ],
+        )
 
 
 crud_manager = OrderCRUD(Order)

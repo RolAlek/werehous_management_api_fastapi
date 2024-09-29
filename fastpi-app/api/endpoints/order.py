@@ -21,3 +21,11 @@ async def get_all_orders(
     session: AsyncSession = Depends(db_manager.get_session),
 ):
     return await order_crud.get_all_orders(session)
+
+
+@router.get("/{order_id}", response_model=ReadOrder)
+async def get_order_by_id(
+    order_id: int,
+    session=Depends(db_manager.get_session),
+):
+    return await order_crud.get_order(order_id, session)
