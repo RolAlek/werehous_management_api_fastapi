@@ -1,9 +1,9 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.validators import check_exist
+from api.validators import check_product
 from core import db_manager
 from crud import product_crud
 from schemas import ProductCreate, ProductRead, ProductUpdate
@@ -29,7 +29,7 @@ async def get_product(
     product_id: int,
     session: AsyncSession = Depends(db_manager.get_session),
 ):
-    return await check_exist(product_id, session)
+    return await check_product(product_id, session)
 
 
 @router.put("/{product_id}", response_model=ProductRead)
@@ -42,7 +42,7 @@ async def update_product(
 ):
     return await product_crud.update(
         product_in,
-        await check_exist(product_id, session),
+        await check_product(product_id, session),
         session,
     )
 
@@ -53,6 +53,6 @@ async def delete_product(
     session: AsyncSession = Depends(db_manager.get_session),
 ):
     await product_crud.remove(
-        await check_exist(product_id, session),
+        await check_product(product_id, session),
         session,
     )
