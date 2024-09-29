@@ -4,9 +4,12 @@ from sqlalchemy.orm import selectinload
 
 from api.validators import check_product
 from models import Order, OrderItem
-from schemas import CreateOrder, ReadOrder, ReadOrderItem
+from schemas import CreateOrder, ReadOrder, ReadOrderItem, UpdateOrder
 
 from .base import CRUDBase
+
+#TODO: refactoring stmt
+#TODO: refactoring assembly response
 
 
 class OrderCRUD(CRUDBase):
@@ -39,10 +42,7 @@ class OrderCRUD(CRUDBase):
         new_order = await session.scalar(
             select(Order)
             .where(Order.id == new_order.id)
-            .options(
-                selectinload(Order.products_details)
-                .joinedload(OrderItem.product)
-            )
+            .options(selectinload(Order.products_details).joinedload(OrderItem.product))
         )
         new_order.products_details = products
         order = ReadOrder(
@@ -96,8 +96,7 @@ class OrderCRUD(CRUDBase):
             select(Order)
             .where(Order.id == order_id)
             .options(
-                selectinload(Order.products_details)
-                .joinedload(OrderItem.product)
+                selectinload(Order.products_details).joinedload(OrderItem.product)
             ),
         )
         return ReadOrder(
@@ -115,6 +114,39 @@ class OrderCRUD(CRUDBase):
                 for item in order.products_details
             ],
         )
+
+    @staticmethod
+    async def update_order(
+        order_id: int,
+        status: UpdateOrder,
+        session: AsyncSession,
+    ):
+        order = await session.scalar(
+            select(Order)
+            .where(Order.id == order_id)
+            .options(
+                selectinload(Order.products_details)
+                .joinedload(OrderItem.product)
+            )
+        )
+        setattr(order, 'status', status.status)
+        response = ReadOrder(
+            id=order.id,
+            created_date=order.created_date,
+            status=order.status,
+            products_details=[
+                ReadOrderItem(
+                    id=item.product.id,
+                    name=item.product.name,
+                    price=item.product.price,
+                    description=item.product.description,
+                    count=item.count_in_cart,
+                )
+                for item in order.products_details
+            ],
+        )
+        await session.commit()
+        return response
 
 
 crud_manager = OrderCRUD(Order)

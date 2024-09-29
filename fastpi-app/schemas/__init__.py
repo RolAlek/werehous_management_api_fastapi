@@ -6,7 +6,8 @@ __all__ = [
     "ProductUpdate",
     "ReadOrder",
     "ReadOrderItem",
+    "UpdateOrder",
 ]
 
-from .order import CreateOrder, OrderItem, ReadOrder, ReadOrderItem
+from .order import CreateOrder, OrderItem, ReadOrder, ReadOrderItem, UpdateOrder
 from .product import ProductCreate, ProductRead, ProductUpdate

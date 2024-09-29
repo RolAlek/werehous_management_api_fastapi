@@ -2,6 +2,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 
+from models.order import OrderStatus
+
 
 class OrderItem(BaseModel):
     product_id: int
@@ -20,9 +22,12 @@ class ReadOrderItem(BaseModel):
     count: int
 
 
-class ReadOrder(BaseModel):
+class UpdateOrder(BaseModel):
+    status: OrderStatus
+
+
+class ReadOrder(UpdateOrder):
     model_config = ConfigDict(from_attributes=True)
     id: int
     created_date: datetime
     products_details: list[ReadOrderItem]
-    status: str

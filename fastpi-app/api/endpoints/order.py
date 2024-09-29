@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from core import db_manager
 from crud import order_crud
-from schemas import CreateOrder, ReadOrder
+from schemas import CreateOrder, ReadOrder, UpdateOrder
 
 router = APIRouter()
 
@@ -29,3 +29,12 @@ async def get_order_by_id(
     session=Depends(db_manager.get_session),
 ):
     return await order_crud.get_order(order_id, session)
+
+
+@router.patch("/{order_id}/status", response_model=ReadOrder)
+async def update_order_status(
+    order_id: int,
+    status: UpdateOrder,
+    session=Depends(db_manager.get_session),
+):
+    return await order_crud.update_order(order_id, status, session)
