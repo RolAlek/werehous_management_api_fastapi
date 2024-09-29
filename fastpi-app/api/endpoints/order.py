@@ -14,3 +14,10 @@ async def create_order(
     session: AsyncSession = Depends(db_manager.get_session),
 ):
     return await order_crud.create_order(new_order, session)
+
+
+@router.get("/", response_model=list[ReadOrder])
+async def get_all_orders(
+    session: AsyncSession = Depends(db_manager.get_session),
+):
+    return await order_crud.get_all_orders(session)
