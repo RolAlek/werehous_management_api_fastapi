@@ -10,6 +10,7 @@ class RunConfig(BaseModel):
 class APIPrefix(BaseModel):
     api_prefix: str = "/api"
     product_prefix: str = "/products"
+    order_prefix: str = "/orders"
 
 
 class DBConfig(BaseModel):
