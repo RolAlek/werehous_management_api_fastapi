@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from models import Base
+from models.base import Base
 
 if TYPE_CHECKING:
     from models import Order, Product

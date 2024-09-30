@@ -1,18 +1,21 @@
 from http import HTTPStatus
-from typing import Type
+from typing import TYPE_CHECKING, Type
 
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from models import Base, Product
+from models import Product
+
+if TYPE_CHECKING:
+    from models import Base
 
 
 async def check_exists(
-    model: Type[Base],
+    model: Type["Base"],
     obj_id: int,
     session: AsyncSession,
-) -> Type[Base]:
+) -> Type["Base"]:
     obj = await session.scalar(select(model).where(model.id == obj_id))
     if obj is None:
         raise HTTPException(
