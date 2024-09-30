@@ -15,5 +15,14 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
 
+  app:
+    build: ./
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      pg:
+        condition: service_healthy
 volumes:
   pg_data:
