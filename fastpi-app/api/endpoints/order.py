@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.validators import check_exists
 from core import db_manager
 from crud import order_crud
+from models import Order
 from schemas import CreateOrder, ReadOrder, UpdateOrder
 
 router = APIRouter()
@@ -28,6 +30,7 @@ async def get_order_by_id(
     order_id: int,
     session=Depends(db_manager.get_session),
 ):
+    await check_exists(Order, order_id, session)
     return await order_crud.get_order(order_id, session)
 
 
@@ -37,4 +40,5 @@ async def update_order_status(
     status: UpdateOrder,
     session=Depends(db_manager.get_session),
 ):
+    await check_exists(Order, order_id, session)
     return await order_crud.update_order(order_id, status, session)
